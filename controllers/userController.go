@@ -19,6 +19,11 @@ func NewUserHandler(db *database.DB) *UserController {
 	}
 }
 
+func (usrController *UserController) Home(w http.ResponseWriter, r *http.Request) {
+	msgStr := "welcome to home page, this is a simple Golang REST API CRUD app"
+	respondWithJSON(w, http.StatusOK, map[string]string{"massage": msgStr})
+}
+
 func (usrController *UserController) CreateNewUser(w http.ResponseWriter, r *http.Request) {
 	newUser := models.User{}
 	err := json.NewDecoder(r.Body).Decode(&newUser)
@@ -26,7 +31,7 @@ func (usrController *UserController) CreateNewUser(w http.ResponseWriter, r *htt
 		respondWithError(w, 400, "error occurred while decoding new user!")
 		return
 	}
-	//MySQL*Pass4883
+
 	fmt.Println("new request")
 	fmt.Println(newUser)
 	newUserId := usrController.repo.CreateNewUser(&newUser)
@@ -38,9 +43,9 @@ func (usrController *UserController) CreateNewUser(w http.ResponseWriter, r *htt
 	})
 }
 
-func (usrController *UserController) Home(w http.ResponseWriter, r *http.Request) {
-	msgStr := "welcome to home page, this is a simple Golang REST API CRUD app"
-	respondWithJSON(w, http.StatusOK, map[string]string{"massage": msgStr})
+func (usrController *UserController) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	allUsers := usrController.repo.GetAllUsers()
+	respondWithJSON(w, http.StatusOK, allUsers)
 }
 
 func respondWithJSON(w http.ResponseWriter, statusCode int, payload interface{}) {
