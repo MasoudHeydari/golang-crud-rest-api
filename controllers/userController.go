@@ -53,7 +53,7 @@ func (usrController *UserController) GetAllUsers(w http.ResponseWriter, r *http.
 func (usrController UserController) Update(w http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.Atoi(mux.Vars(r)["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "id number not valid")
+		respondWithError(w, http.StatusBadRequest, "id is not valid")
 		return
 	}
 	userToUpdate := models.User{}
@@ -61,6 +61,16 @@ func (usrController UserController) Update(w http.ResponseWriter, r *http.Reques
 	json.NewDecoder(r.Body).Decode(&userToUpdate)
 	userToUpdate = *usrController.repo.Update(userToUpdate.ID, &userToUpdate)
 	respondWithJSON(w, http.StatusOK, userToUpdate)
+}
+
+func (usrController UserController) Delete(w http.ResponseWriter, r *http.Request) {
+	userId, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "id is not valid")
+	}
+
+	usrController.repo.Delete(uint(userId))
+	respondWithJSON(w, http.StatusOK, map[string]string{"massage": "user deleted successfully"})
 }
 
 func respondWithJSON(w http.ResponseWriter, statusCode int, payload interface{}) {

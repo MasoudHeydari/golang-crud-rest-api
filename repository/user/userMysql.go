@@ -44,3 +44,8 @@ func (mysql *mySqlUserRepository) Update(userId uint, userToUpdate *models.User)
 	mysql.DbConn.Model(&savedUser).Updates(userToUpdate)
 	return &savedUser
 }
+
+func (mysql *mySqlUserRepository) Delete(userId uint) *models.User {
+	mysql.DbConn.Delete(&models.User{}, userId)
+	return nil
+}

@@ -6,4 +6,5 @@ type UserRepository interface {
 	CreateNewUser(newUser *models.User) uint
 	GetAllUsers() []*models.User
 	Update(userId uint, user *models.User) *models.User
+	Delete(userId uint) *models.User
 }
