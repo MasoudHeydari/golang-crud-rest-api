@@ -36,3 +36,11 @@ func (mysql *mySqlUserRepository) GetAllUsers() []*models.User {
 	fmt.Printf("number of all users: %v", len(users))
 	return users
 }
+
+func (mysql *mySqlUserRepository) Update(userId uint, userToUpdate *models.User) *models.User {
+	savedUser := models.User{}
+	mysql.DbConn.First(&savedUser, userId)
+	// update all columns that user passed via request
+	mysql.DbConn.Model(&savedUser).Updates(userToUpdate)
+	return &savedUser
+}

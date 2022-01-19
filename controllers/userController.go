@@ -6,7 +6,9 @@ import (
 	"github.com/MasoudHeydari/golang-crud-rest-api/database"
 	"github.com/MasoudHeydari/golang-crud-rest-api/models"
 	"github.com/MasoudHeydari/golang-crud-rest-api/repository/user"
+	"github.com/gorilla/mux"
 	"net/http"
+	"strconv"
 )
 
 type UserController struct {
@@ -46,6 +48,19 @@ func (usrController *UserController) CreateNewUser(w http.ResponseWriter, r *htt
 func (usrController *UserController) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	allUsers := usrController.repo.GetAllUsers()
 	respondWithJSON(w, http.StatusOK, allUsers)
+}
+
+func (usrController UserController) Update(w http.ResponseWriter, r *http.Request) {
+	userId, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "id number not valid")
+		return
+	}
+	userToUpdate := models.User{}
+	userToUpdate.ID = uint(userId)
+	json.NewDecoder(r.Body).Decode(&userToUpdate)
+	userToUpdate = *usrController.repo.Update(userToUpdate.ID, &userToUpdate)
+	respondWithJSON(w, http.StatusOK, userToUpdate)
 }
 
 func respondWithJSON(w http.ResponseWriter, statusCode int, payload interface{}) {
